@@ -1,0 +1,46 @@
+```mermaid
+graph LR
+    subgraph External["External"]
+        Users[Users]
+        Devices[Devices]
+    end
+
+    subgraph Verify["Verification"]
+        Auth[Authentication]
+        Authz[Authorization]
+        Posture[Device Posture]
+    end
+
+    subgraph Enforce["Enforcement"]
+        Gateway[Access Gateway]
+        Firewall[Network Firewall]
+        Segments[Micro-Segments]
+    end
+
+    subgraph Protect["Protected Resources"]
+        Apps[Applications]
+        Data[Data Stores]
+        APIs[APIs]
+    end
+
+    subgraph Monitor["Continuous Monitoring"]
+        Logs[Audit Logs]
+        Alerts[Security Alerts]
+        Analytics[Behavior Analytics]
+    end
+
+    Users --> Auth
+    Devices --> Posture
+    Auth --> Authz
+    Posture --> Authz
+    Authz --> Gateway
+    Gateway --> Firewall
+    Firewall --> Segments
+    Segments --> Apps
+    Segments --> Data
+    Segments --> APIs
+    Gateway --> Logs
+    Firewall --> Logs
+    Logs --> Alerts
+    Logs --> Analytics
+```

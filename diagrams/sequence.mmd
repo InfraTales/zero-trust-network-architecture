@@ -1,0 +1,31 @@
+```mermaid
+sequenceDiagram
+    participant User as User/Device
+    participant IdP as Identity Provider
+    participant VA as Verified Access
+    participant Policy as Policy Engine
+    participant FW as Network Firewall
+    participant App as Application
+
+    User->>IdP: Authenticate (username + MFA)
+    IdP-->>User: Identity token
+    User->>VA: Access request + token
+    VA->>IdP: Validate token
+    IdP-->>VA: Token valid
+    VA->>Policy: Evaluate access policy
+    
+    Note over Policy: Check user, device, context
+    
+    alt Access Granted
+        Policy-->>VA: Allow
+        VA->>FW: Forward request
+        FW->>FW: Inspect traffic
+        FW->>App: Deliver request
+        App-->>User: Response
+    else Access Denied
+        Policy-->>VA: Deny
+        VA-->>User: Access denied
+    end
+
+    VA->>VA: Log access decision
+```

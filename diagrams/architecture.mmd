@@ -1,0 +1,56 @@
+```mermaid
+graph TD
+    subgraph Users["Users & Devices"]
+        Employee[Employee]
+        Contractor[Contractor]
+        Device[Device Posture]
+    end
+
+    subgraph Identity["Identity Layer"]
+        IdP[Identity Provider]
+        IAMCenter[IAM Identity Center]
+        MFA[MFA Service]
+    end
+
+    subgraph Access["Access Layer"]
+        VerifiedAccess[AWS Verified Access]
+        Policies[Access Policies]
+        Context[Context Engine]
+    end
+
+    subgraph Network["Network Layer"]
+        Firewall[Network Firewall]
+        PrivateLink[PrivateLink Endpoints]
+        SecurityGroups[Security Groups]
+    end
+
+    subgraph Workloads["Protected Workloads"]
+        App1[Application A]
+        App2[Application B]
+        Data[Data Store]
+    end
+
+    subgraph Monitoring["Security Monitoring"]
+        CloudTrail[CloudTrail]
+        GuardDuty[GuardDuty]
+        SecurityHub[Security Hub]
+    end
+
+    Employee --> IdP
+    Contractor --> IdP
+    Device --> Context
+    IdP --> IAMCenter
+    IAMCenter --> MFA
+    MFA --> VerifiedAccess
+    Context --> VerifiedAccess
+    VerifiedAccess --> Policies
+    Policies --> Firewall
+    Firewall --> PrivateLink
+    PrivateLink --> SecurityGroups
+    SecurityGroups --> App1
+    SecurityGroups --> App2
+    SecurityGroups --> Data
+    VerifiedAccess --> CloudTrail
+    Firewall --> GuardDuty
+    GuardDuty --> SecurityHub
+```
