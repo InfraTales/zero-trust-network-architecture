@@ -112,4 +112,4 @@ Common issues and resolutions for the **Zero-Trust Network Architecture**.
 - Optimize PrivateLink endpoints
 - Review CloudWatch log retention
 
-> For architecture details, see `ARCHITECTURE.md`.
+> For architecture details, see the project README.
