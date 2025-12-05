@@ -1,111 +1,70 @@
-# Runbook
+# Operations Runbook
 
-Operational guide for deploying, operating, and maintaining the **Zero-Trust Network Architecture**.
+## Overview
+This runbook provides operational procedures for managing and maintaining this infrastructure.
 
-## 1. Deployment
+## Prerequisites
+- AWS CLI configured
+- Terraform/CDK/Pulumi installed
+- Appropriate IAM permissions
 
-### Prerequisites
+## Common Operations
 
-- AWS CLI configured with appropriate credentials
-- Terraform 1.5+ installed
-- Identity provider configured (Okta, Azure AD, etc.)
-
-### Deploy Steps
-
+### Deployment
 ```bash
-# Initialize Terraform
-terraform init
+# Development
+./scripts/deploy.sh dev
 
-# Plan deployment
-terraform plan -var="environment=prod" -out=tfplan
-
-# Apply deployment
-terraform apply tfplan
+# Production
+./scripts/deploy.sh prod
 ```
 
-## 2. Identity Configuration
+### Monitoring
+- CloudWatch Dashboard: Check AWS Console
+- Alerts: Configured via SNS
+- Logs: CloudWatch Logs
 
-### Add New User
+### Troubleshooting
 
-1. Create user in identity provider
-2. Assign to appropriate groups
-3. Groups map to AWS IAM roles
-4. User can access via Verified Access
+#### Issue: Deployment Fails
+**Symptoms**: Terraform/CDK apply fails
+**Resolution**:
+1. Check AWS credentials
+2. Verify IAM permissions
+3. Review error logs
+4. Check resource quotas
 
-### Configure Conditional Access
+#### Issue: High Costs
+**Symptoms**: Unexpected AWS charges
+**Resolution**:
+1. Review Cost Explorer
+2. Check for unused resources
+3. Verify auto-scaling policies
+4. Review instance types
 
-```hcl
-# Example: Require MFA for sensitive resources
-resource "aws_verifiedaccess_trust_provider" "mfa_required" {
-  policy_reference_name = "mfa-required"
-  trust_provider_type   = "user"
-  user_trust_provider_type = "iam-identity-center"
-}
-```
+### Maintenance Windows
+- Preferred: Sunday 02:00-06:00 UTC
+- Avoid: Business hours (09:00-17:00 local time)
 
-## 3. Network Policies
+### Escalation
+1. Team Lead
+2. DevOps Manager
+3. On-call Engineer
 
-### Add Micro-Segment
+## Emergency Procedures
 
-1. Create new security group
-2. Define ingress/egress rules
-3. Associate with workloads
-4. Update firewall policies
-
-### Update Firewall Rules
-
+### Rollback
 ```bash
-# Deploy firewall rule changes
-terraform apply -target=aws_networkfirewall_rule_group.main
+# Terraform
+terraform apply -var-file=previous.tfvars
+
+# CDK
+cdk deploy --previous-version
+
+# Pulumi
+pulumi stack select previous
+pulumi up
 ```
 
-## 4. Monitoring
-
-### Key Metrics to Watch
-
-- **Authentication failures**: Potential brute force
-- **Policy denials**: Misconfiguration or attack
-- **Anomalous access patterns**: Compromised credentials
-- **Network traffic**: Lateral movement attempts
-
-### Dashboards
-
-Pre-configured dashboards for:
-
-- Access request overview
-- Policy enforcement status
-- Network traffic analysis
-- Security findings
-
-## 5. Incident Response
-
-### Suspected Compromise
-
-1. Isolate affected workload (update security group)
-2. Revoke user sessions
-3. Review CloudTrail logs
-4. Engage incident response team
-
-### Emergency Access Revocation
-
-```bash
-# Revoke all sessions for user
-aws identitystore delete-user --identity-store-id <id> --user-id <user-id>
-```
-
-## 6. Maintenance
-
-### Regular Tasks
-
-- Review access policies quarterly
-- Rotate service credentials monthly
-- Update firewall rules as needed
-- Audit user access annually
-
-### Teardown
-
-```bash
-terraform destroy -var="environment=dev"
-```
-
-> For troubleshooting common issues, see `docs/troubleshooting.md`.
+### Disaster Recovery
+See [DISASTER_RECOVERY.md](DISASTER_RECOVERY.md)
